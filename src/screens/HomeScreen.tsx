@@ -9,12 +9,11 @@ const HomeScreen: React.FC = () => {
     const { movies, loading, error, page, total } = useSelector((state: RootState) => state.movies);
 
     useEffect(() => {
-            console.log("Fetching for page:",{page});
-            dispatch(fetchMoviesGroupThunk(page));
-    }, [dispatch, page]);
+        console.log("Fetching movies for page:", page);
+        dispatch(fetchMoviesGroupThunk());
+    }, [page]);
 
     const handleShowMore = () => {
-        console.log("Click");
         dispatch(incrementPage());
     };
 
@@ -30,15 +29,13 @@ const HomeScreen: React.FC = () => {
                         title={movie.nameRu || movie.nameOriginal}
                         imageUrl={movie.posterUrl}
                         ratingKinopoisk={movie.ratingKinopoisk}
-                        /*Обработать массив через стрелку*/
                         genres={movie.genres.map((g) => g.genre)}
                         year={movie.year}
                     />
                 ))}
             </div>
 
-            {/* Кнопка "Показать ещё" или сообщение */}
-            {page * 20 < total ? (
+            {movies.length < total ? (
                 <button
                     className="mt-6 p-2 bg-blue-500 text-white rounded"
                     onClick={handleShowMore}
@@ -47,7 +44,7 @@ const HomeScreen: React.FC = () => {
                 </button>
             ) : (
                 <p className="mt-6 text-center text-gray-500">
-                    Не нашли то, что нужно? Попробуйте изменить фильтр!
+                    Не нашли то, что нужно? Попробуйте изменить фильтры!
                 </p>
             )}
         </div>
