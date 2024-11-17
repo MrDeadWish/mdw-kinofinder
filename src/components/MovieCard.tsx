@@ -11,7 +11,7 @@ interface MovieCardProps {
 const MovieCard: React.FC<MovieCardProps> = (
     {title, imageUrl,ratingKinopoisk,genres,year }) => {
     return (
-        <div className="w-full p-2 border-4 border-amber-300">
+        <div className="w-full p-2 border-4 border-amber-300 rounded-md">
             <div className="bg-white shadow-md rounded-lg  overflow-hidden">
                 <img
                     src={imageUrl}

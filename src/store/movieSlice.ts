@@ -64,7 +64,7 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
                         yearTo,
                     },
                 });
-
+                console.log(response.data);
                 const { items, total } = response.data;
                 if (!items || items.length === 0) break;
 
