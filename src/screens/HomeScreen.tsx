@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchMoviesGroupThunk, incrementPage } from '../store/movieSlice';
 import { RootState, AppDispatch } from '../store/store';
 import MovieCard from '../components/MovieCard';
+import SidebarFilter from "../components/SidebarFilter";
 
 const HomeScreen: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -18,6 +19,8 @@ const HomeScreen: React.FC = () => {
     };
 
     return (
+        <div className="flex">
+            <SidebarFilter></SidebarFilter>
         <div className="container mx-auto p-6">
             <h1 className="text-3xl font-bold mb-6">Главная страница</h1>
             {loading && <p>Загрузка...</p>}
@@ -47,6 +50,7 @@ const HomeScreen: React.FC = () => {
                     Не нашли то, что нужно? Попробуйте изменить фильтры!
                 </p>
             )}
+        </div>
         </div>
     );
 };

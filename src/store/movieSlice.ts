@@ -19,6 +19,10 @@ interface MoviesState {
     error: string | null;
     page: number;
     total: number;
+    ratingFrom: number;
+    ratingTo: number;
+    yearFrom: number;
+    yearTo: number;
 }
 
 const initialState: MoviesState = {
@@ -27,6 +31,10 @@ const initialState: MoviesState = {
     error: null,
     page: 1,
     total: 0,
+    ratingFrom: 1,
+    ratingTo: 10,
+    yearFrom: 1990,
+    yearTo: 2024,
 };
 
 const api = axios.create({
@@ -40,25 +48,26 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
     'movies/fetchMoviesGroup',
     async (_, { getState, rejectWithValue }) => {
         const state = getState() as RootState;
-        const { page, movies } = state.movies;
+        const { page, movies, ratingFrom, ratingTo, yearFrom, yearTo } = state.movies;
 
         let uniqueMovies: Movie[] = [...movies];
         let currentPage = page;
 
-        // Цикл будет продолжаться до тех пор, пока не наберём 25 уникальных фильмов
         while (uniqueMovies.length < movies.length + 25) {
             try {
                 const response = await api.get('/films', {
                     params: {
                         page: currentPage,
-                        ratingFrom: 1,
-                        ratingTo: 10,
-                        yearFrom: 1990,
-                        yearTo: 2024,
+                        ratingFrom,
+                        ratingTo,
+                        yearFrom,
+                        yearTo,
                     },
                 });
+
                 const { items, total } = response.data;
                 if (!items || items.length === 0) break;
+
                 const newMovies = items.filter(
                     (item: Movie) => !uniqueMovies.some(movie => movie.kinopoiskId === item.kinopoiskId)
                 );
@@ -66,9 +75,7 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
                 uniqueMovies = [...uniqueMovies, ...newMovies];
                 currentPage += 1;
                 if (uniqueMovies.length >= total) break;
-
             } catch (error: any) {
-                console.error("Ошибка при загрузке данных:", error);
                 return rejectWithValue(error.message || 'Ошибка загрузки данных');
             }
         }
@@ -85,6 +92,21 @@ const moviesSlice = createSlice({
     reducers: {
         incrementPage(state) {
             state.page += 1;
+        },
+        setRatingFrom(state, action) {
+            state.ratingFrom = action.payload;
+        },
+        setRatingTo(state, action) {
+            state.ratingTo = action.payload;
+        },
+        setYearFrom(state, action) {
+            state.yearFrom = action.payload;
+        },
+        setYearTo(state, action) {
+            state.yearTo = action.payload;
+        },
+        clearMovies: (state) => {
+            state.movies = [];
         },
     },
     extraReducers: (builder) => {
@@ -111,5 +133,12 @@ const moviesSlice = createSlice({
     },
 });
 
-export const { incrementPage } = moviesSlice.actions;
+export const {
+    incrementPage,
+    setRatingFrom,
+    setRatingTo,
+    setYearFrom,
+    setYearTo,
+    clearMovies,
+} = moviesSlice.actions;
 export default moviesSlice.reducer;
