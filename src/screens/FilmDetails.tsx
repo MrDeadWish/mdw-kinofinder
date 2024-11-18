@@ -16,7 +16,7 @@ const FilmDetails: React.FC = () => {
             dispatch(fetchSimilarMoviesThunk(id));
         }
 
-        // Очистка данных при размонтировании компонента
+
         return () => {
             dispatch(clearMovieDetails());
         };
@@ -62,17 +62,17 @@ const FilmDetails: React.FC = () => {
                 </div>
             )}
 
-            {/*/!* Похожие фильмы *!/*/}
-            {/*{similarMovies.length > 0 && (*/}
-            {/*    <div>*/}
-            {/*        <h3 className="text-2xl font-bold mb-4">Похожие фильмы</h3>*/}
-            {/*        <div className="grid grid-cols-5 gap-4">*/}
-            {/*            {similarMovies.map(movie => (*/}
-            {/*                <MovieCard key={movie.kinopoiskId} movie={movie} />*/}
-            {/*            ))}*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+            {/* Похожие фильмы */}
+            {similarMovies.length > 0 && (
+                <div>
+                    <h3 className="text-2xl font-bold mb-4">Похожие фильмы</h3>
+                    <div className="grid grid-cols-5 gap-4">
+                        {similarMovies.map(movie => (
+                            <MovieCard key={movie.kinopoiskId} movie={movie} />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

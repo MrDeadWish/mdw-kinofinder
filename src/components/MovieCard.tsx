@@ -3,23 +3,24 @@ import { useNavigate } from 'react-router-dom';
 
 interface MovieCardProps {
     movie: {
-        kinopoiskId: number;
-        nameRu: string;
-        nameOriginal: string;
-        posterUrl: string;
-        ratingKinopoisk: number;
-        genres: { genre: string }[];
-        year: number;
+        kinopoiskId?: number;
+        filmId?: number;
+        nameRu?: string;
+        nameOriginal?: string;
+        posterUrl?: string;
+        ratingKinopoisk?: number;
+        genres?: { genre?: string }[];
+        year?: number;
     };
 }
 
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
     const navigate = useNavigate();
-
+    const movieID = movie.kinopoiskId ?? movie.filmId;
     const handleImageClick = () => {
 
-        navigate(`/film/${movie.kinopoiskId}`);
+        navigate(`/film/${movieID}`);
     };
 
     return (
@@ -36,7 +37,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
                 <h2 className="text-lg font-bold text-center">{movie.nameRu || movie.nameOriginal}</h2>
                 <h3 className="font-bold text-center">{movie.year}</h3>
                 <h3>Рейтинг - {movie.ratingKinopoisk}</h3>
-                <h3>{movie.genres.map((g) => g.genre).join(', ')}</h3>
+                <h3>{movie.genres?.map((g) => g.genre).join(', ')}</h3>
             </div>
         </div>
     );

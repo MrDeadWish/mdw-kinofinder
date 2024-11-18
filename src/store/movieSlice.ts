@@ -45,7 +45,6 @@ const initialState: MoviesState = {
     yearTo: 2024,
 };
 
-// Thunk для загрузки групп фильмов
 export const fetchMoviesGroupThunk = createAsyncThunk(
     'movies/fetchMoviesGroup',
     async (_, { getState, rejectWithValue }) => {

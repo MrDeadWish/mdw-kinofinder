@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Настройки для axios
 const api = axios.create({
     baseURL: 'https://kinopoiskapiunofficial.tech/api/v2.2',
     headers: {

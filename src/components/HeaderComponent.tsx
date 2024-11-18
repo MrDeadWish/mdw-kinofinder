@@ -11,7 +11,8 @@ const Header: React.FC = () => {
                         alt="KinoFinder Logo"
                         className="h-8 w-8"
                     />
-                    <Link to="/">KinoFinder</Link>
+                    <Link className="border-4 border-amber-500 rounded-md" to="/">
+                         KinoFinder </Link>
                 </div>
 
                 <nav className="flex space-x-4">
