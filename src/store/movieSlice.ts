@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {RootState} from "./store";
+import api from '../store/api';
+import { RootState } from './store';
 
 interface Movie {
     kinopoiskId: number;
@@ -9,12 +10,17 @@ interface Movie {
     posterUrl: string;
     description: string;
     ratingKinopoisk: number;
+    ratingImdb?: number;
     genres: { genre: string }[];
     year: number;
+    trailerUrl?: string;
+    boxOffice?: number;
 }
 
 interface MoviesState {
     movies: Movie[];
+    filmDetails: Movie | null;
+    similarMovies: Movie[];
     loading: boolean;
     error: string | null;
     page: number;
@@ -27,6 +33,8 @@ interface MoviesState {
 
 const initialState: MoviesState = {
     movies: [],
+    filmDetails: null,
+    similarMovies: [],
     loading: false,
     error: null,
     page: 1,
@@ -37,13 +45,7 @@ const initialState: MoviesState = {
     yearTo: 2024,
 };
 
-const api = axios.create({
-    baseURL: `https://kinopoiskapiunofficial.tech/api/v2.2`,
-    headers: {
-        'X-API-KEY': `c21f5cbd-d457-445d-ae24-8d899fa09727`,
-    },
-});
-
+// Thunk для загрузки групп фильмов
 export const fetchMoviesGroupThunk = createAsyncThunk(
     'movies/fetchMoviesGroup',
     async (_, { getState, rejectWithValue }) => {
@@ -64,7 +66,6 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
                         yearTo,
                     },
                 });
-                console.log(response.data);
                 const { items, total } = response.data;
                 if (!items || items.length === 0) break;
 
@@ -84,7 +85,33 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
     }
 );
 
+// Thunk для загрузки детальной информации о фильме
+export const fetchFilmDetailsThunk = createAsyncThunk(
+    'movies/fetchFilmDetails',
+    async (id: string, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/films/${id}`);
+            console.log(response.data);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Ошибка загрузки данных о фильме');
+        }
+    }
+);
 
+// Thunk для загрузки похожих фильмов
+export const fetchSimilarMoviesThunk = createAsyncThunk(
+    'movies/fetchSimilarMovies',
+    async (id: string, { rejectWithValue }) => {
+        try {
+            const response = await api.get(`/films/${id}/similars`);
+            console.log(response.data);
+            return response.data.items;
+        } catch (error: any) {
+            return rejectWithValue(error.message || 'Ошибка загрузки похожих фильмов');
+        }
+    }
+);
 
 const moviesSlice = createSlice({
     name: 'movies',
@@ -111,6 +138,7 @@ const moviesSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Групповые фильмы
             .addCase(fetchMoviesGroupThunk.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -125,10 +153,32 @@ const moviesSlice = createSlice({
                     state.total = action.payload.total;
                 }
             })
-
             .addCase(fetchMoviesGroupThunk.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Ошибка загрузки данных';
+                state.error = action.payload as string;
+            })
+
+            // Детальная информация о фильме
+            .addCase(fetchFilmDetailsThunk.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.filmDetails = null;
+            })
+            .addCase(fetchFilmDetailsThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                state.filmDetails = action.payload;
+            })
+            .addCase(fetchFilmDetailsThunk.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+
+            // Похожие фильмы
+            .addCase(fetchSimilarMoviesThunk.fulfilled, (state, action) => {
+                state.similarMovies = action.payload;
+            })
+            .addCase(fetchSimilarMoviesThunk.rejected, (state, action) => {
+                state.error = action.payload as string;
             });
     },
 });
@@ -141,4 +191,5 @@ export const {
     setYearTo,
     clearMovies,
 } = moviesSlice.actions;
+
 export default moviesSlice.reducer;

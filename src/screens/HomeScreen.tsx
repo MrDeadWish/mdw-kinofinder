@@ -29,11 +29,7 @@ const HomeScreen: React.FC = () => {
                 {movies.map((movie) => (
                     <MovieCard
                         key={movie.kinopoiskId}
-                        title={movie.nameRu || movie.nameOriginal}
-                        imageUrl={movie.posterUrl}
-                        ratingKinopoisk={movie.ratingKinopoisk}
-                        genres={movie.genres.map((g) => g.genre)}
-                        year={movie.year}
+                        movie={movie}
                     />
                 ))}
             </div>
