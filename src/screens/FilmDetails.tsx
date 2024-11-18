@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchMovieDetailsThunk, fetchSimilarMoviesThunk, clearMovieDetails } from '../store/movieDetailsSlice';
+import { fetchMovieDetailsThunk, fetchSimilarMoviesThunk, fetchMovieTrailerThunk, fetchBoxOfficeThunk, clearMovieDetails } from '../store/movieDetailsSlice';
 import { RootState, AppDispatch } from '../store/store';
 import MovieCard from '../components/MovieCard';
 
@@ -14,8 +14,9 @@ const FilmDetails: React.FC = () => {
         if (id) {
             dispatch(fetchMovieDetailsThunk(id));
             dispatch(fetchSimilarMoviesThunk(id));
+            dispatch(fetchMovieTrailerThunk(id));
+            dispatch(fetchBoxOfficeThunk(id));
         }
-
 
         return () => {
             dispatch(clearMovieDetails());
@@ -26,7 +27,7 @@ const FilmDetails: React.FC = () => {
     if (error) return <p className="text-red-500">Ошибка: {error}</p>;
 
     if (!movie) return <p>Фильм не найден</p>;
-
+    console.log("Ссылка на видео", movie.trailerUrl);
     return (
         <div className="flex-grow container mx-auto p-6">
             <nav className="text-sm mb-4">
@@ -43,23 +44,21 @@ const FilmDetails: React.FC = () => {
                     <p className="mb-2">Рейтинг Кинопоиск: {movie.ratingKinopoisk}</p>
                     <p className="mb-2">Рейтинг IMDb: {movie.ratingImdb}</p>
                     <p className="mt-4">{movie.description}</p>
-                    {movie.boxOffice && <p className="text-gray-500 mt-4">Сборы в прокате: ${movie.boxOffice.grossWorldwide}</p>}
+                    {movie.boxOffice && `Сборы в прокате: ${movie.currencyChar}${movie.boxOffice}`}
                 </div>
             </div>
 
             {/* Трейлер */}
             {movie.trailerUrl && (
-                <div className="mb-8">
-                    <h3 className="text-2xl font-bold mb-4">Трейлер</h3>
-                    <iframe
-                        width="100%"
-                        height="400"
-                        src={movie.trailerUrl}
-                        title="Фильм Трейлер"
-                        allowFullScreen
-                        className="rounded-lg shadow-lg"
-                    />
-                </div>
+                <iframe
+                    width="560"
+                    height="315"
+                    src={movie.trailerUrl}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                ></iframe>
             )}
 
             {/* Похожие фильмы */}
