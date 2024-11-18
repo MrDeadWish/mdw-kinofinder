@@ -9,10 +9,19 @@ const HomeScreen: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { movies, loading, error, page, total } = useSelector((state: RootState) => state.movies);
 
+    //Фетчинг при запуске
     useEffect(() => {
-        console.log("Fetching movies for page:", page);
-        dispatch(fetchMoviesGroupThunk());
-    }, [page]);
+        if (movies.length === 0) {
+            dispatch(fetchMoviesGroupThunk());
+        }
+    }, [dispatch, movies.length]);
+
+    //Фетчинг при изменении номера страницы
+    useEffect(() => {
+        if (page > 1) {
+            dispatch(fetchMoviesGroupThunk());
+        }
+    }, [dispatch, page]);
 
     const handleShowMore = () => {
         dispatch(incrementPage());

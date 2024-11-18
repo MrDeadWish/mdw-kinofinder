@@ -23,16 +23,15 @@ const FilmDetails: React.FC = () => {
     if (!filmDetails) return <p>Фильм не найден</p>;
 
     return (
-        <div className="container mx-auto p-6">
+        <div className="flex-grow container mx-auto p-6">
             <nav className="text-sm mb-4">
                 <Link to="/" className="text-blue-500">Главная</Link> / {filmDetails.nameRu || filmDetails.nameOriginal}
             </nav>
 
             <div className="flex flex-col md:flex-row items-start mb-8">
-                {/* Изображение фильма */}
                 <img src={filmDetails.posterUrl} alt={filmDetails.nameRu} className="w-80 rounded-lg shadow-lg" />
 
-                {/* Детали фильма */}
+
                 <div className="ml-6">
                     <h2 className="text-3xl font-bold mb-2">{filmDetails.nameRu || filmDetails.nameOriginal}</h2>
                     <p className="text-gray-500 mb-2">Год выпуска: {filmDetails.year}</p>
@@ -59,7 +58,6 @@ const FilmDetails: React.FC = () => {
                 </div>
             )}
 
-            {/* Карусель похожих фильмов */}
             {similarMovies.length > 0 && (
                 <div>
                     <h3 className="text-2xl font-bold mb-4">Похожие фильмы</h3>
