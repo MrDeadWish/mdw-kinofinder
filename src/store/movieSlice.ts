@@ -66,6 +66,7 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
                         yearTo,
                     },
                 });
+                console.log("Main response:",response.data);
                 const { items, total } = response.data;
                 if (!items || items.length === 0) break;
 
@@ -85,33 +86,8 @@ export const fetchMoviesGroupThunk = createAsyncThunk(
     }
 );
 
-// Thunk для загрузки детальной информации о фильме
-export const fetchFilmDetailsThunk = createAsyncThunk(
-    'movies/fetchFilmDetails',
-    async (id: string, { rejectWithValue }) => {
-        try {
-            const response = await api.get(`/films/${id}`);
-            console.log(response.data);
-            return response.data;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Ошибка загрузки данных о фильме');
-        }
-    }
-);
 
-// Thunk для загрузки похожих фильмов
-export const fetchSimilarMoviesThunk = createAsyncThunk(
-    'movies/fetchSimilarMovies',
-    async (id: string, { rejectWithValue }) => {
-        try {
-            const response = await api.get(`/films/${id}/similars`);
-            console.log(response.data);
-            return response.data.items;
-        } catch (error: any) {
-            return rejectWithValue(error.message || 'Ошибка загрузки похожих фильмов');
-        }
-    }
-);
+
 
 const moviesSlice = createSlice({
     name: 'movies',
@@ -158,28 +134,6 @@ const moviesSlice = createSlice({
                 state.error = action.payload as string;
             })
 
-            // Детальная информация о фильме
-            .addCase(fetchFilmDetailsThunk.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-                state.filmDetails = null;
-            })
-            .addCase(fetchFilmDetailsThunk.fulfilled, (state, action) => {
-                state.loading = false;
-                state.filmDetails = action.payload;
-            })
-            .addCase(fetchFilmDetailsThunk.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
-            })
-
-            // Похожие фильмы
-            .addCase(fetchSimilarMoviesThunk.fulfilled, (state, action) => {
-                state.similarMovies = action.payload;
-            })
-            .addCase(fetchSimilarMoviesThunk.rejected, (state, action) => {
-                state.error = action.payload as string;
-            });
     },
 });
 
